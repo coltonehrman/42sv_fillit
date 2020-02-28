@@ -652,54 +652,48 @@ void			add_spacing(int call, int right)
 	ft_putstr("] ");
 }
 
-int			solve_square(int col, int row, int bounds, t_u64b *s, t_u16b *b_tets, int call)
+int			solve_square(int bounds, t_u64b *s, t_u16b *b_tets, int call)
 {
 	int		i;
+	int		col;
+	int		row;
 	int		placed_tet;
 	int		placed_col;
 	int		placed_row;
 
+	/*
 	add_spacing(call, 1);
-	ft_putstr("solve_square");
-	ft_putstr("(col: ");
-	ft_putnbr(col);
-	ft_putstr(", row: ");
-	ft_putnbr(row);
-	ft_putstr(", b_tets: ");
+	ft_putstr("solve_square(b_tets: ");
 	ft_putnbr(count_b_tets(b_tets));
 	ft_putstr(")\n");
-	
+	*/
+
 	if (count_b_tets(b_tets) == 0)
 		return (1);
-	if (col >= bounds || col == -1)
-		col = 0;
-	if (row >= bounds)
-	{
-		add_spacing(call, 0);
-		ft_putstr("return (0);\n");
-		return (0);
-	}
 
 	i = 0;
 	placed_tet = -1;
 	while (b_tets[i])
 	{
+		/*
 		add_spacing(call, 1);
 		ft_putstr("start loop: ");
 		ft_putstr(" b_tet: \t\t\t\t\t[ ");
 		print_bin(b_tets[i], 16);
 		ft_putstr(" ]\n");
-		if (can_place_tet_in_square(bounds, s, b_tets[i]))
+		*/
+		row = 0;
+		while (row < bounds)
 		{
-			if (can_place_tet_in_row(row, bounds, s, b_tets[i]))
+			col = 0;
+			while (col < bounds)
 			{
-				add_spacing(call, 1);
-				ft_putstr("can place tet in row\n");
 				if (can_place_tet(col, row, s, b_tets[i]))
 				{
 					placed_tet = i;
 					placed_col = col;
 					placed_row = row;
+					/*
 					add_spacing(call, 1);
 					ft_putstr("can place tet\n");
 					add_spacing(call, 1);
@@ -713,35 +707,36 @@ int			solve_square(int col, int row, int bounds, t_u64b *s, t_u16b *b_tets, int 
 	
 					ft_putstr("before: \n");
 					print_overlay(s, 10, 64);
-				
+					*/
 					place_tet(col, row, s, b_tets[i]);
 
+					/*
 					ft_putstr("after: \n");
 					print_overlay(s, 10, 64);
+					*/
 
-					if (solve_square(0, 0, bounds, s, ++b_tets, call + 1))
+					--i;
+					if (solve_square(bounds, s, ++b_tets, call + 1))
 						return (1);
+
+					--b_tets;
+					++i;
+					unplace_tet(placed_col, placed_row, s, b_tets[placed_tet]);
 				}
-				else
-				{
-					++col;
-					continue;
-				}
+				++col;
 			}
-			else
-			{
-				col = 0;
-				++row;
-				continue;
-			}
+			++row;
 		}
+		/*
 		add_spacing(call, 1);
 		ft_putstr("end loop b_tet: \t\t\t\t [ ");
 		print_bin(b_tets[i], 16);
 		ft_putstr(" ]\n");
+		*/
 		++i;
 	}
 
+	/*
 	if (placed_tet != -1)
 	{
 		add_spacing(call, 1);
@@ -753,10 +748,10 @@ int			solve_square(int col, int row, int bounds, t_u64b *s, t_u16b *b_tets, int 
 		ft_putnbr(placed_row);
 		ft_putstr("\n\n");
 		
-		unplace_tet(placed_col, placed_row, s, b_tets[placed_tet]);
 		
 		print_overlay(s, 10, 64);
 	}
+	*/
 	return (0);
 }
 
@@ -845,7 +840,7 @@ int			main(int argc, char **argv)
 		}
 		tet_overlays[i] = 0;
 		*/
-		solve_square(0, 0, row_bounds, square, b_tets, 1);
+		solve_square(row_bounds, square, b_tets, 1);
 		print_overlay(square, 10, 64);
 		/*
 		print_overlays(square, 64, tet_overlays, col_bounds, row_bounds);
