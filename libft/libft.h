@@ -6,7 +6,7 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/18 06:36:40 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/20 19:58:13 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/02/27 17:28:08 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,12 @@
 # endif
 # ifndef MININT
 #  define MININT -2147483648
+# endif
+# ifndef BUFF_SIZE
+#  define BUFF_SIZE 1000
+# endif
+# ifndef MAX_FD
+#  define MAX_FD 1025
 # endif
 # include <stdlib.h>
 # include <unistd.h>
@@ -100,4 +106,6 @@ int				ft_count_words(const char *s, char c);
 int				ft_count_till(const char *s, char c);
 int				ft_count_digits(int n);
 int				ft_int_overflow(int n1, char op, int n2);
+
+int				get_next_line(const int fd, char **line);
 #endif

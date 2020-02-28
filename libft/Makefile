@@ -5,7 +5,7 @@ SOURCES = ./libft.h
 NAME = libft.a
 
 $(NAME):
-	$(CC) $(CFLAGS) -c ft_*.c
+	$(CC) $(CFLAGS) -c *.c
 	ar rcs $(NAME) *.o
 	ranlib $(NAME)
 
