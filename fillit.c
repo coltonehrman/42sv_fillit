@@ -840,7 +840,14 @@ int			main(int argc, char **argv)
 		}
 		tet_overlays[i] = 0;
 		*/
-		solve_square(row_bounds, square, b_tets, 1);
+		while (!solve_square(row_bounds, square, b_tets, 1))
+		{
+			++row_bounds;
+			++col_bounds;
+			init_overlay(square, 64);
+			add_bounds_to_square(square, row_bounds);
+		}
+		
 		print_overlay(square, 10, 64);
 		/*
 		print_overlays(square, 64, tet_overlays, col_bounds, row_bounds);
