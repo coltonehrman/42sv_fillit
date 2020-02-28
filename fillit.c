@@ -6,44 +6,14 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/23 14:08:06 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/28 14:09:21 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/02/28 14:34:53 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include "fillit.h"
 
-void	free_matrix(char ***matrix)
-{
-	int	i;
-
-	i = 0;
-	while ((*matrix)[i])
-	{
-		free((*matrix)[i]);
-		(*matrix)[i] = 0;
-		i++;
-	}
-	free(*matrix);
-	*matrix = 0;
-}
-
-int		number_of_tets(char *tetriminos)
-{
-	char	**tets;
-	int		i;
-	
-	// split on new line to get each individual tetrimino
-	tets = ft_strsplit(tetriminos, '\n');
-	i = 0;
-	while (tets[i++])
-		;
-	// free memory from split
-	free_matrix(&tets);
-	return (i - 1);
-}
-
-t_u16b		tet_to_bin(char *tet)
+t_u16b	tet_to_bin(char *tet)
 {
 	t_u16b	bin;
 	int		x;
@@ -60,95 +30,45 @@ t_u16b		tet_to_bin(char *tet)
 	return (bin);
 }
 
-int			left_most_bit(t_u64b n)
-{
-	int pos;
-
-	pos = 65;
-	while (pos-- > 0)
-	{
-		// 0x8000 0000 0000 0000 is 64 bit binary with left most bit set to 1
-		if (0x8000000000000000 & n)
-			return (pos);
-		n <<= 1;
-	}
-	return (-1);
-}
-
-void		print_bin(t_u64b n, int size)
-{
-	int					i;
-	int					prints;
-	t_u64b	x;
-
-	x = 0x1;
-	i = size;
-	while (--size)
-		x <<= 1;
-	prints = 0;
-	while (i--)
-	{
-		prints++;
-		if (x & n)
-			ft_putnbr(1);
-		else
-			ft_putnbr(0);
-		if (prints == 4 && i != 0)
-		{
-			ft_putchar(' ');
-			prints = 0;
-		}
-		x >>= 1;
-	}
-}
-
-void		print_overlay(t_u64b *overlay, int rows, int size)
+void	free_matrix(char ***matrix)
 {
 	int	i;
 
 	i = 0;
-	while (i < rows)
+	while ((*matrix)[i])
 	{
-		print_bin(overlay[i++], size);
-		ft_putchar('\n');
-	}
-	ft_putchar('\n');
-}
-
-void		print_overlays(t_u64b *s, int s_size, t_u64b **layers, t_u64b col_b, int row_b)
-{
-	int	i;
-	int j;
-	int	printed_char;
-	t_u64b col;
-
-	i = 0;
-	while (i < s_size && i < row_b)
-	{
-		col = 0x8000000000000000;
-		while (col)
-		{
-			j = 0;
-			printed_char = 0;
-			while (layers[j] && !(col & col_b))
-			{
-				if ((s[i] & col) && (layers[j][i] & col))
-				{
-					ft_putchar((char)(j + 65));
-					printed_char = 1;
-				}
-				j++;
-			}
-			if (!(col & col_b) && !printed_char)
-				ft_putchar('.');
-			col >>= 1;
-		}
-		ft_putchar('\n');
+		free((*matrix)[i]);
+		(*matrix)[i] = 0;
 		i++;
 	}
+	free(*matrix);
+	*matrix = 0;
 }
 
-int			count_bits(t_u16b b)
+t_u8b	get_row_of_tet(t_u16b tet, int row)
+{
+	t_u8b	nib;
+
+	tet = tet << ((row - 1) * 4);
+	tet = tet >> 12;
+	nib = tet;
+	return (nib);
+}
+
+int		can_shift_tet(t_u16b tet)
+{
+	t_u8b row[4];
+
+	row[0] = get_row_of_tet(tet, 1);
+	row[1] = get_row_of_tet(tet, 2);
+	row[2] = get_row_of_tet(tet, 3);
+	row[3] = get_row_of_tet(tet, 4);
+
+	return (!(row[0] & 0x08) && !(row[1] & 0x08) &&
+			!(row[2] & 0x08) && !(row[3] & 0x08));
+}
+
+int		count_bits(t_u16b b)
 {
 	int c;
 
@@ -162,51 +82,7 @@ int			count_bits(t_u16b b)
 	return (c);
 }
 
-int			get_size(int bit_count)
-{
-	int	size;
-
-	size = 2;
-	while ((size * size) <= bit_count)
-		size++;
-	return (size);
-}
-
-t_u8b		get_row_of_tet(t_u16b tet, int row)
-{
-	t_u8b	nib;
-
-	tet = tet << ((row - 1) * 4);
-	tet = tet >> 12;
-	nib = tet;
-	return (nib);
-}
-
-t_u16b		shift_to_corner(t_u16b corner, t_u16b tet)
-{
-	t_u16b shifted;
-
-	shifted = tet;
-
-	while (!(shifted & corner))
-		shifted = shifted << 1;
-	return (shifted);
-}
-
-int			can_shift_tet(t_u16b tet)
-{
-	t_u8b row[4];
-
-	row[0] = get_row_of_tet(tet, 1);
-	row[1] = get_row_of_tet(tet, 2);
-	row[2] = get_row_of_tet(tet, 3);
-	row[3] = get_row_of_tet(tet, 4);
-
-	return (!(row[0] & 0x08) && !(row[1] & 0x08) &&
-			!(row[2] & 0x08) && !(row[3] & 0x08));
-}
-
-t_u16b		compress_tet(t_u16b tet)
+t_u16b	compress_tet(t_u16b tet)
 {
 	t_u16b	shifted;
 	t_u8b	row[4];
@@ -703,60 +579,4 @@ void		add_bounds_to_square(t_u64b *s, int bounds)
 			s[i] = row_mask;
 		++i;
 	}
-}
-
-int			main(int argc, char **argv)
-{
-	t_u64b	square[64];
-	t_u64b	col_bounds;
-	t_u16b	*b_tets;
-	char	**tets_matrix;
-	char	*tets_string;
-	int		row_bounds;
-	int		fd;
-	int		i;
-	int		total_tets;
-	int		total_bits;
-
-	if (argc != 2)
-		return (0);
-	tets_string = ft_strnew(0);
-	// open file for reading
-	if ((fd = open(argv[1], O_RDONLY)) > 0)
-	{
-		read_tets(fd, &tets_string);
-		tets_matrix = ft_strsplit(tets_string, '\n');
-		free(tets_string);
-		total_bits = 0;
-		b_tets = (t_u16b *)malloc(sizeof(t_u16b) * (get_num_strings(tets_matrix) + 1));
-
-		i = 0;
-		while (tets_matrix[i])
-		{
-			b_tets[i] = tet_to_bin(tets_matrix[i]);
-			print_bin(b_tets[i], 16);
-			ft_putchar('\n');
-			total_bits += count_bits(b_tets[i]);
-			++i;
-		}
-		b_tets[i] = 0;
-		free_matrix(&tets_matrix);
-		ft_putchar('\n');
-
-		init_overlay(square, 64);
-		set_bounds(&col_bounds, &row_bounds, calc_min_square_size(total_bits));
-		total_tets = (total_bits / 4);
-		printf("bounds: %d\n", row_bounds);
-		add_bounds_to_square(square, row_bounds);
-		while (!solve_square(row_bounds, square, b_tets, 1))
-		{
-			++row_bounds;
-			++col_bounds;
-			init_overlay(square, 64);
-			add_bounds_to_square(square, row_bounds);
-		}
-		
-		print_overlay(square, 10, 64);
-	}
-	return (0);
 }

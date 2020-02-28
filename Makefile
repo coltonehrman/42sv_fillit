@@ -1,7 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 NAME = fillit
-SRC = fillit.c
+SRC = main.c fillit.c
+DEBUG = debug_funcs.c
 LIBFT = libft/libft.a
 OBJ = $(SRC:.c=.o)
 
@@ -13,6 +14,9 @@ INCLUDES = libft/libft.a
 all: $(NAME)
 
 $(NAME): $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBFT)
+
+debug: $(OBJ) $(DEBUG:.c=.o)
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBFT)
 
 clean:
