@@ -6,7 +6,7 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/23 14:08:06 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/27 18:57:41 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/02/28 14:09:21 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ t_u16b		tet_to_bin(char *tet)
 	t_u16b	bin;
 	int		x;
 
-	//....|####|....|....
-	//0000 1111 0000 0000
 	bin = 0;
 	x = 0x8000;
 	while (*tet)
@@ -154,7 +152,6 @@ int			count_bits(t_u16b b)
 {
 	int c;
 
-	//0000 1100 0100 0100
 	c = 0;
 	while (b > 0)
 	{
@@ -205,7 +202,6 @@ int			can_shift_tet(t_u16b tet)
 	row[2] = get_row_of_tet(tet, 3);
 	row[3] = get_row_of_tet(tet, 4);
 
-	// 0000 0011
 	return (!(row[0] & 0x08) && !(row[1] & 0x08) &&
 			!(row[2] & 0x08) && !(row[3] & 0x08));
 }
@@ -506,15 +502,6 @@ int			can_place_tet(int col, int row, t_u64b *s, t_u16b b_tet)
 	// check overlap
 	b_tet = compress_tet(b_tet);
 	b_section = create_section(col, row, s);
-	/*
-	ft_putstr("(col: ");
-	ft_putnbr(col);
-	ft_putstr(") (row: ");
-	ft_putnbr(row);
-	ft_putstr(") b_section: ");
-	print_bin(b_section, 16);
-	ft_putchar('\n');
-	*/
 	return (!(b_tet & b_section));
 }
 
@@ -528,15 +515,6 @@ int			can_place_tet_in_row(int row, int bounds, t_u64b *s, t_u16b b_tet)
 	while (i < bounds)
 	{
 		b_section = create_section(i, row, s);
-		/*
-		ft_putstr("[10] (col: ");
-		ft_putnbr(i);
-		ft_putstr(") (row: ");
-		ft_putnbr(row);
-		ft_putstr(") b_section: ");
-		print_bin(b_section, 16);
-		ft_putchar('\n');
-		*/
 		++i;
 		if (!(b_tet & b_section))
 			return (1);
@@ -661,13 +639,6 @@ int			solve_square(int bounds, t_u64b *s, t_u16b *b_tets, int call)
 	int		placed_col;
 	int		placed_row;
 
-	/*
-	add_spacing(call, 1);
-	ft_putstr("solve_square(b_tets: ");
-	ft_putnbr(count_b_tets(b_tets));
-	ft_putstr(")\n");
-	*/
-
 	if (count_b_tets(b_tets) == 0)
 		return (1);
 
@@ -675,13 +646,6 @@ int			solve_square(int bounds, t_u64b *s, t_u16b *b_tets, int call)
 	placed_tet = -1;
 	while (b_tets[i])
 	{
-		/*
-		add_spacing(call, 1);
-		ft_putstr("start loop: ");
-		ft_putstr(" b_tet: \t\t\t\t\t[ ");
-		print_bin(b_tets[i], 16);
-		ft_putstr(" ]\n");
-		*/
 		row = 0;
 		while (row < bounds)
 		{
@@ -693,27 +657,7 @@ int			solve_square(int bounds, t_u64b *s, t_u16b *b_tets, int call)
 					placed_tet = i;
 					placed_col = col;
 					placed_row = row;
-					/*
-					add_spacing(call, 1);
-					ft_putstr("can place tet\n");
-					add_spacing(call, 1);
-					ft_putstr("placing tet [ ");
-					print_bin(b_tets[i], 16);
-					ft_putstr(" ] in col: ");
-					ft_putnbr(col);
-					ft_putstr(" row: ");
-					ft_putnbr(row);
-					ft_putstr("\n");
-	
-					ft_putstr("before: \n");
-					print_overlay(s, 10, 64);
-					*/
 					place_tet(col, row, s, b_tets[i]);
-
-					/*
-					ft_putstr("after: \n");
-					print_overlay(s, 10, 64);
-					*/
 
 					--i;
 					if (solve_square(bounds, s, ++b_tets, call + 1))
@@ -727,31 +671,8 @@ int			solve_square(int bounds, t_u64b *s, t_u16b *b_tets, int call)
 			}
 			++row;
 		}
-		/*
-		add_spacing(call, 1);
-		ft_putstr("end loop b_tet: \t\t\t\t [ ");
-		print_bin(b_tets[i], 16);
-		ft_putstr(" ]\n");
-		*/
 		++i;
 	}
-
-	/*
-	if (placed_tet != -1)
-	{
-		add_spacing(call, 1);
-		ft_putstr("[7] unplacing tet |");
-		print_bin(b_tets[placed_tet], 16);
-		ft_putstr("| in col: ");
-		ft_putnbr(placed_col);
-		ft_putstr(" row: ");
-		ft_putnbr(placed_row);
-		ft_putstr("\n\n");
-		
-		
-		print_overlay(s, 10, 64);
-	}
-	*/
 	return (0);
 }
 
@@ -796,7 +717,6 @@ int			main(int argc, char **argv)
 	int		i;
 	int		total_tets;
 	int		total_bits;
-	//t_u64b	**tet_overlays;
 
 	if (argc != 2)
 		return (0);
@@ -810,8 +730,6 @@ int			main(int argc, char **argv)
 		total_bits = 0;
 		b_tets = (t_u16b *)malloc(sizeof(t_u16b) * (get_num_strings(tets_matrix) + 1));
 
-		//printf("num tet strings: %d\n", get_num_strings(tets_matrix));
-		
 		i = 0;
 		while (tets_matrix[i])
 		{
@@ -830,16 +748,6 @@ int			main(int argc, char **argv)
 		total_tets = (total_bits / 4);
 		printf("bounds: %d\n", row_bounds);
 		add_bounds_to_square(square, row_bounds);
-		/*
-		tet_overlays = (t_u64b **)malloc(sizeof(t_u64b*) * (total_tets + 1));
-		i = 0;
-		while (i < total_tets)
-		{
-			tet_overlays[i] = push_tet_in_square(square, b_tets[i], &col_bounds, &row_bounds);
-			i++;
-		}
-		tet_overlays[i] = 0;
-		*/
 		while (!solve_square(row_bounds, square, b_tets, 1))
 		{
 			++row_bounds;
@@ -849,18 +757,6 @@ int			main(int argc, char **argv)
 		}
 		
 		print_overlay(square, 10, 64);
-		/*
-		print_overlays(square, 64, tet_overlays, col_bounds, row_bounds);
-		i = 0;
-		while ((tet_overlays)[i])
-		{
-			free(((void *)((tet_overlays)[i])));
-			tet_overlays[i] = 0;
-			i++;
-		}
-		free(tet_overlays);
-		tet_overlays = 0;
-		*/
 	}
 	return (0);
 }
