@@ -598,6 +598,14 @@ int			find_next_col(t_u64b s_row)
 	return ((pos == 63) ? -1 : pos);
 }
 
+int			count_b_tets(t_u16b *b_tets)
+{
+	int i = 0;
+	while (b_tets[i++])
+		;
+	return (i - 1);
+}
+
 int			solve_square(int col, int row, int bounds, t_u64b *s, t_u16b *b_tets)
 {
 	int		i;
@@ -610,8 +618,12 @@ int			solve_square(int col, int row, int bounds, t_u64b *s, t_u16b *b_tets)
 	ft_putnbr(col);
 	ft_putstr(") (row: ");
 	ft_putnbr(row);
+	ft_putstr(") (b_tets: ");
+	ft_putnbr(count_b_tets(b_tets));
 	ft_putstr(")\n");
 	
+	if (count_b_tets(b_tets) == 0)
+		return (1);
 	if (col >= bounds || col == -1)
 	{
 		col = 0;
@@ -652,13 +664,16 @@ int			solve_square(int col, int row, int bounds, t_u64b *s, t_u16b *b_tets)
 			
 				place_tet(col, row, s, b_tets[i]);
 				col = find_next_col(s[row]);
-				
+
+				if (col == -1)
+					col = 0;
+
 				ft_putstr("[5] next open col: ");
 				ft_putnbr(col);
 				ft_putstr("\n\n");
 				
 				print_overlay(s, 10, 64);
-				if (solve_square(col, row, bounds, s, b_tets + 1))
+				if (solve_square(col, 0, bounds, s, b_tets + 1))
 					return (1);
 			}
 			else if (solve_square(col + 1, row, bounds, s, b_tets))
@@ -666,11 +681,11 @@ int			solve_square(int col, int row, int bounds, t_u64b *s, t_u16b *b_tets)
 		}
 		else if (solve_square(0, row + 1, bounds, s, b_tets))
 			return (1);
+
 		ft_putstr("[6] bottom of loop\n");
 		ft_putstr("b_tet: ");
 		print_bin(b_tets[i], 16);
 		ft_putstr("\n\n");
-
 		++i;
 	}
 
