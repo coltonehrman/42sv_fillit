@@ -6,7 +6,7 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/23 14:08:06 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/27 12:01:20 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/02/27 17:30:42 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ int		number_of_tets(char *tetriminos)
 	return (i - 1);
 }
 
-t_ush		tet_to_bin(char *tet)
+t_u16b		tet_to_bin(char *tet)
 {
-	t_ush	bin;
+	t_u16b	bin;
 	int				x;
 
 	//....|####|....|....
@@ -62,7 +62,7 @@ t_ush		tet_to_bin(char *tet)
 	return (bin);
 }
 
-int			left_most_bit(t_ull n)
+int			left_most_bit(t_u64b n)
 {
 	int pos;
 
@@ -77,11 +77,11 @@ int			left_most_bit(t_ull n)
 	return (-1);
 }
 
-void		print_bin(t_ull n, int size)
+void		print_bin(t_u64b n, int size)
 {
 	int					i;
 	int					prints;
-	t_ull	x;
+	t_u64b	x;
 
 	x = 0x1;
 	i = size;
@@ -104,7 +104,7 @@ void		print_bin(t_ull n, int size)
 	}
 }
 
-void		print_overlay(t_ull *overlay, int rows, int size)
+void		print_overlay(t_u64b *overlay, int rows, int size)
 {
 	int	i;
 
@@ -117,12 +117,12 @@ void		print_overlay(t_ull *overlay, int rows, int size)
 	ft_putchar('\n');
 }
 
-void		print_overlays(t_ull *s, int s_size, t_ull **layers, t_ull col_b, int row_b)
+void		print_overlays(t_u64b *s, int s_size, t_u64b **layers, t_u64b col_b, int row_b)
 {
 	int	i;
 	int j;
 	int	printed_char;
-	t_ull col;
+	t_u64b col;
 
 	i = 0;
 	while (i < s_size && i < row_b)
@@ -150,7 +150,7 @@ void		print_overlays(t_ull *s, int s_size, t_ull **layers, t_ull col_b, int row_
 	}
 }
 
-int			count_bits(t_ush b)
+int			count_bits(t_u16b b)
 {
 	int c;
 
@@ -175,9 +175,9 @@ int			get_size(int bit_count)
 	return (size);
 }
 
-t_uch		get_row_of_tet(t_ush tet, int row)
+t_u8b		get_row_of_tet(t_u16b tet, int row)
 {
-	t_uch	nib;
+	t_u8b	nib;
 
 	tet = tet << ((row - 1) * 4);
 	tet = tet >> 12;
@@ -185,9 +185,9 @@ t_uch		get_row_of_tet(t_ush tet, int row)
 	return (nib);
 }
 
-t_ush		shift_to_corner(t_ush corner, t_ush tet)
+t_u16b		shift_to_corner(t_u16b corner, t_u16b tet)
 {
-	t_ush shifted;
+	t_u16b shifted;
 
 	shifted = tet;
 
@@ -196,9 +196,9 @@ t_ush		shift_to_corner(t_ush corner, t_ush tet)
 	return (shifted);
 }
 
-int			can_shift_tet(t_ush tet)
+int			can_shift_tet(t_u16b tet)
 {
-	t_uch row[4];
+	t_u8b row[4];
 
 	row[0] = get_row_of_tet(tet, 1);
 	row[1] = get_row_of_tet(tet, 2);
@@ -210,10 +210,10 @@ int			can_shift_tet(t_ush tet)
 			!(row[2] & 0x08) && !(row[3] & 0x08));
 }
 
-t_ush		compress_tet(t_ush tet)
+t_u16b		compress_tet(t_u16b tet)
 {
-	t_ush	shifted;
-	t_uch	row[4];
+	t_u16b	shifted;
+	t_u8b	row[4];
 	int				i;
 
 	shifted = tet;
@@ -265,15 +265,15 @@ void		read_tets(int fd, char **tets)
 	}
 }
 
-void		init_overlay(t_ull *s, int size)
+void		init_overlay(t_u64b *s, int size)
 {
 	while (size-- > 0)
 		s[size] = 0x0;
 }
 
-int			find_next_open_bit(t_ull s)
+int			find_next_open_bit(t_u64b s)
 {
-	t_ull	start;
+	t_u64b	start;
 	int					pos;
 
 	start = 0x1;
@@ -288,9 +288,9 @@ int			find_next_open_bit(t_ull s)
 	return (pos - 1);
 }
 
-void		create_tet_overlay(t_ull *overlay, t_ush b_tet)
+void		create_tet_overlay(t_u64b *overlay, t_u16b b_tet)
 {
-	t_ull	row;
+	t_u64b	row;
 	int					i;
 
 	init_overlay(overlay, 64);
@@ -300,7 +300,7 @@ void		create_tet_overlay(t_ull *overlay, t_ush b_tet)
 	while (i < 4)
 	{
 		row = 0x0;
-		// return t_uch 0000 0000
+		// return t_u8b 0000 0000
 		row = get_row_of_tet(b_tet, i + 1);
 		// shift over to end of overlay
 		row <<= 60;
@@ -308,7 +308,7 @@ void		create_tet_overlay(t_ull *overlay, t_ush b_tet)
 	}
 }
 
-void		set_overlays(t_ull *o1, t_ull *o2, int size)
+void		set_overlays(t_u64b *o1, t_u64b *o2, int size)
 {
 	int i;
 
@@ -320,7 +320,7 @@ void		set_overlays(t_ull *o1, t_ull *o2, int size)
 	}
 }
 
-int			overlays_overlap(t_ull *o1, t_ull *o2, int size)
+int			overlays_overlap(t_u64b *o1, t_u64b *o2, int size)
 {
 	int	i;
 	
@@ -334,7 +334,7 @@ int			overlays_overlap(t_ull *o1, t_ull *o2, int size)
 	return (0);
 }
 
-int			in_col_bounds(t_ull *overlay, t_ull col_bounds, int size)
+int			in_col_bounds(t_u64b *overlay, t_u64b col_bounds, int size)
 {
 	int	i;
 
@@ -348,7 +348,7 @@ int			in_col_bounds(t_ull *overlay, t_ull col_bounds, int size)
 	return (1);
 }
 
-int			in_row_bounds(t_ull *overlay, int row_bounds, int size)
+int			in_row_bounds(t_u64b *overlay, int row_bounds, int size)
 {
 	int	i;
 
@@ -362,17 +362,17 @@ int			in_row_bounds(t_ull *overlay, int row_bounds, int size)
 	return (1);
 }
 
-int			in_bounds(t_ull *overlay, t_ull col_bounds, int row_bounds)
+int			in_bounds(t_u64b *overlay, t_u64b col_bounds, int row_bounds)
 {
 	return (in_col_bounds(overlay, col_bounds, 64)
 			&& in_row_bounds(overlay, row_bounds, 64));
 }
 
-void		shift_tet_overlay_down(t_ull *overlay, int size)
+void		shift_tet_overlay_down(t_u64b *overlay, int size)
 {
-	t_ull	prev;
-	t_ull	curr;
-	t_ull	next;
+	t_u64b	prev;
+	t_u64b	curr;
+	t_u64b	next;
 	int					i;
 	
 	i = 0;
@@ -390,7 +390,7 @@ void		shift_tet_overlay_down(t_ull *overlay, int size)
 	}
 }
 
-int			shift_tet_overlay_right(t_ull *overlay, int size)
+int			shift_tet_overlay_right(t_u64b *overlay, int size)
 {
 	int	i;
 
@@ -400,7 +400,7 @@ int			shift_tet_overlay_right(t_ull *overlay, int size)
 	return (1);
 }
 
-int			shift_tet_overlay_far_left(t_ull *overlay, int size)
+int			shift_tet_overlay_far_left(t_u64b *overlay, int size)
 {
 	int i;
 	int	can_shift;
@@ -428,11 +428,11 @@ int			shift_tet_overlay_far_left(t_ull *overlay, int size)
 	return (1);
 }
 
-t_ull		*push_tet_in_square(t_ull *s, t_ush b_tet, t_ull *col_bounds, int *row_bounds)
+t_u64b		*push_tet_in_square(t_u64b *s, t_u16b b_tet, t_u64b *col_bounds, int *row_bounds)
 {
-	t_ull	*tet_overlay;
+	t_u64b	*tet_overlay;
 
-	tet_overlay = (t_ull *)malloc(sizeof(t_ull) * 64);
+	tet_overlay = (t_u64b *)malloc(sizeof(t_u64b) * 64);
 	create_tet_overlay(tet_overlay, b_tet);
 	while (overlays_overlap(s, tet_overlay, 64))
 	{
@@ -463,27 +463,27 @@ int			calc_min_square_size(int total_bits)
 	return (square - 1);
 }
 
-void		set_bounds(t_ull *col_bounds, int *row_bounds, int square)
+void		set_bounds(t_u64b *col_bounds, int *row_bounds, int square)
 {
 	printf("square: %d\n", square);
 	*col_bounds = (0xFFFFFFFFFFFFFFFF >> square);
 	*row_bounds = square;
 }
 
-//int			solve_square(t_ull col_pos, int row_pos, t_ull **tet_overlays)
+//int			solve_square(t_u64b col_pos, int row_pos, t_u64b **tet_overlays)
 
 /***********************************************\ 
 	
-  solve_square(t_ull )
+  solve_square(t_u64b )
 
 
 \***********************************************/
 
 int			main(int argc, char **argv)
 {
-	t_ull	square[64];
-	t_ull	col_bounds;
-	t_ush	b_tet[10];  // size is hardcoded
+	t_u64b	square[64];
+	t_u64b	col_bounds;
+	t_u16b	b_tet[10];  // size is hardcoded
 	char	**matrix;
 	char	*tets;
 	int		row_bounds;
@@ -491,7 +491,7 @@ int			main(int argc, char **argv)
 	int		i;
 	int		total_tets;
 	int		total_bits;
-	t_ull	**tet_overlays;
+	t_u64b	**tet_overlays;
 
 	if (argc < 1)
 		return (0);
@@ -506,7 +506,7 @@ int			main(int argc, char **argv)
 		total_bits = 0;
 		while (matrix[i])
 		{
-			// converts tets to binary (t_ushs)
+			// converts tets to binary (t_u16bs)
 			b_tet[i] = tet_to_bin(matrix[i]);
 			print_bin(b_tet[i], 16);
 			ft_putchar('\n');
@@ -518,7 +518,7 @@ int			main(int argc, char **argv)
 		init_overlay(square, 64);
 		set_bounds(&col_bounds, &row_bounds, calc_min_square_size(total_bits));
 		total_tets = (total_bits / 4);
-		tet_overlays = (t_ull **)malloc(sizeof(t_ull*) * (total_tets + 1));
+		tet_overlays = (t_u64b **)malloc(sizeof(t_u64b*) * (total_tets + 1));
 		i = 0;
 		while (i < total_tets)
 		{
