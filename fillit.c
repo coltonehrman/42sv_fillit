@@ -6,7 +6,7 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/23 14:08:06 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/28 14:34:53 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/02/28 16:57:37 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -449,20 +449,21 @@ void		place_tet(int col, int row, t_u64b *s, t_u16b b_tet)
 	}
 }
 
-void		unplace_tet(int col, int row, t_u64b *s, t_u16b b_tet)
+void		unplace_tet(t_u64b *s, t_tet *b_tet)
 {
 	t_u64b	b_tet_row[4];
+	t_u16b	b_tet_data;
 	int		i = 0;
 
-	b_tet = compress_tet(b_tet);
-	b_tet_row[0] = create_btet_row(col, 1, b_tet);
-	b_tet_row[1] = create_btet_row(col, 2, b_tet);
-	b_tet_row[2] = create_btet_row(col, 3, b_tet);
-	b_tet_row[3] = create_btet_row(col, 4, b_tet);
+	b_tet_data = compress_tet(b_tet->data);
+	b_tet_row[0] = create_btet_row(b_tet->col, 1, b_tet_data);
+	b_tet_row[1] = create_btet_row(b_tet->col, 2, b_tet_data);
+	b_tet_row[2] = create_btet_row(b_tet->col, 3, b_tet_data);
+	b_tet_row[3] = create_btet_row(b_tet->col, 4, b_tet_data);
 
 	while (i < 4)
 	{
-		s[row + i] = s[row + i] ^ b_tet_row[i];
+		s[b_tet->row + i] = s[b_tet->row + i] ^ b_tet_row[i];
 		++i;
 	}
 }
@@ -482,7 +483,7 @@ int			find_next_col(t_u64b s_row)
 	return ((pos == 63) ? -1 : pos);
 }
 
-int			count_b_tets(t_u16b *b_tets)
+int			count_b_tets(t_tet **b_tets)
 {
 	int i = 0;
 	while (b_tets[i++])
@@ -504,52 +505,6 @@ void			add_spacing(int call, int right)
 	ft_putstr(" [");
 	ft_putnbr(call);
 	ft_putstr("] ");
-}
-
-int			solve_square(int bounds, t_u64b *s, t_u16b *b_tets, int call)
-{
-	int		i;
-	int		col;
-	int		row;
-	int		placed_tet;
-	int		placed_col;
-	int		placed_row;
-
-	if (count_b_tets(b_tets) == 0)
-		return (1);
-
-	i = 0;
-	placed_tet = -1;
-	while (b_tets[i])
-	{
-		row = 0;
-		while (row < bounds)
-		{
-			col = 0;
-			while (col < bounds)
-			{
-				if (can_place_tet(col, row, s, b_tets[i]))
-				{
-					placed_tet = i;
-					placed_col = col;
-					placed_row = row;
-					place_tet(col, row, s, b_tets[i]);
-
-					--i;
-					if (solve_square(bounds, s, ++b_tets, call + 1))
-						return (1);
-
-					--b_tets;
-					++i;
-					unplace_tet(placed_col, placed_row, s, b_tets[placed_tet]);
-				}
-				++col;
-			}
-			++row;
-		}
-		++i;
-	}
-	return (0);
 }
 
 int			get_num_strings(char **matrix)

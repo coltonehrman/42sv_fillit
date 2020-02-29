@@ -1,6 +1,6 @@
 #include "fillit.h"
 
-void	print_bin(t_u64b n, int size)
+void	print_bin(t_u64b n, int bounds, int size)
 {
 	int					i;
 	int					prints;
@@ -18,7 +18,7 @@ void	print_bin(t_u64b n, int size)
 			ft_putnbr(1);
 		else
 			ft_putnbr(0);
-		if (prints == 4 && i != 0)
+		if (prints == bounds && i != 0)
 		{
 			ft_putchar(' ');
 			prints = 0;
@@ -27,14 +27,14 @@ void	print_bin(t_u64b n, int size)
 	}
 }
 
-void	print_overlay(t_u64b *overlay, int rows, int size)
+void	print_overlay(t_u64b *overlay, int rows, int bounds, int size)
 {
 	int	i;
 
 	i = 0;
 	while (i < rows)
 	{
-		print_bin(overlay[i++], size);
+		print_bin(overlay[i++], bounds, size);
 		ft_putchar('\n');
 	}
 	ft_putchar('\n');

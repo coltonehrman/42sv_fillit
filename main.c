@@ -6,7 +6,7 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 14:20:37 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/28 14:20:55 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/02/28 17:27:28 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	main(int argc, char **argv)
 {
 	t_u64b	square[64];
 	t_u64b	col_bounds;
-	t_u16b	*b_tets;
+	t_tet	**b_tets;
 	char	**tets_matrix;
 	char	*tets_string;
 	int		row_bounds;
@@ -35,18 +35,21 @@ int	main(int argc, char **argv)
 		tets_matrix = ft_strsplit(tets_string, '\n');
 		free(tets_string);
 		total_bits = 0;
-		b_tets = (t_u16b *)malloc(sizeof(t_u16b) * (get_num_strings(tets_matrix) + 1));
-
+		if (!(b_tets = (t_tet **)malloc(sizeof(t_tet *) * (get_num_strings(tets_matrix) + 1))))
+			ft_putstr("couldnt malloc\n");
 		i = 0;
 		while (tets_matrix[i])
 		{
-			b_tets[i] = tet_to_bin(tets_matrix[i]);
-			print_bin(b_tets[i], 16);
+			b_tets[i] = (t_tet *)malloc(sizeof(t_tet));
+			b_tets[i]->data = tet_to_bin(tets_matrix[i]);
+			print_bin(b_tets[i]->data, 4, 16);
 			ft_putchar('\n');
-			total_bits += count_bits(b_tets[i]);
+			total_bits += count_bits(b_tets[i]->data);
+			b_tets[i]->col = 0;
+			b_tets[i]->row = 0;
 			++i;
 		}
-		b_tets[i] = 0;
+		b_tets[i] = NULL;
 		free_matrix(&tets_matrix);
 		ft_putchar('\n');
 
@@ -62,7 +65,7 @@ int	main(int argc, char **argv)
 			add_bounds_to_square(square, row_bounds);
 		}
 		
-		print_overlay(square, 10, 64);
+		print_overlay(square, 10, row_bounds, 64);
 	}
 	return (0);
 }

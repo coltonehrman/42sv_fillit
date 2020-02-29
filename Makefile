@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 NAME = fillit
-SRC = main.c fillit.c
+SRC = main.c fillit.c solve_square.c
 DEBUG = debug_funcs.c
 LIBFT = libft/libft.a
 OBJ = $(SRC:.c=.o)
