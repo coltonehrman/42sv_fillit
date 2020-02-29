@@ -6,7 +6,7 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/23 14:08:22 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/28 17:22:23 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/02/28 19:59:01 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,14 @@ typedef struct	s_tetrimino {
 	t_u16b		data;
 	int			col;
 	int			row;
+	char		c;
 }				t_tet;
 
+t_u16b	create_section(int col, int row, t_u64b *s);
 t_u16b	compress_tet(t_u16b tet);
 t_u16b	tet_to_bin(char *tet);
 
+void	print_solution(t_u64b *square, t_tet **b_tets, int bounds);
 void	set_bounds(t_u64b *col_bounds, int *row_bounds, int square);
 void	add_bounds_to_square(t_u64b *s, int bounds);
 void	place_tet(int col, int row, t_u64b *s, t_u16b b_tet);

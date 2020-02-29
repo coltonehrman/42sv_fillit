@@ -6,7 +6,7 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 14:20:37 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/28 17:27:28 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/02/28 19:58:22 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int	main(int argc, char **argv)
 	int		i;
 	int		total_tets;
 	int		total_bits;
+	char	tet_c;
 
 	if (argc != 2)
 		return (0);
@@ -38,6 +39,7 @@ int	main(int argc, char **argv)
 		if (!(b_tets = (t_tet **)malloc(sizeof(t_tet *) * (get_num_strings(tets_matrix) + 1))))
 			ft_putstr("couldnt malloc\n");
 		i = 0;
+		tet_c = 'A';
 		while (tets_matrix[i])
 		{
 			b_tets[i] = (t_tet *)malloc(sizeof(t_tet));
@@ -47,6 +49,7 @@ int	main(int argc, char **argv)
 			total_bits += count_bits(b_tets[i]->data);
 			b_tets[i]->col = 0;
 			b_tets[i]->row = 0;
+			b_tets[i]->c = tet_c++;
 			++i;
 		}
 		b_tets[i] = NULL;
@@ -65,7 +68,8 @@ int	main(int argc, char **argv)
 			add_bounds_to_square(square, row_bounds);
 		}
 		
-		print_overlay(square, 10, row_bounds, 64);
+		print_overlay(square, 20, row_bounds, 64);
+		print_solution(square, b_tets, row_bounds);
 	}
 	return (0);
 }
