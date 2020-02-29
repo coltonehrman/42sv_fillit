@@ -6,7 +6,7 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/23 14:08:06 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/29 13:55:06 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/02/29 15:06:40 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -440,10 +440,11 @@ void		place_tet(int col, int row, t_u64b *s, t_u16b b_tet)
 	b_tet_row[1] = create_btet_row(col, 2, b_tet);
 	b_tet_row[2] = create_btet_row(col, 3, b_tet);
 	b_tet_row[3] = create_btet_row(col, 4, b_tet);
-	ft_putstr("b_tet: ");
-	print_bin(b_tet, 4, 16);
-	ft_putstr("\n");
+	//ft_putstr("b_tet: ");
+	//print_bin(b_tet, 4, 16);
+	//ft_putstr("\n");
 
+	/*
 	i = 0;
 	while (i < 4)
 	{
@@ -454,14 +455,15 @@ void		place_tet(int col, int row, t_u64b *s, t_u16b b_tet)
 		ft_putstr("\n");
 		++i;
 	}
+	*/
 	i = 0;
 	while (i < 4)
 	{
-		ft_putstr("b_tet_row[");
-		ft_putnbr(i);
-		ft_putstr("]: ");
-		print_bin(b_tet_row[i], 4, 64);  
-		ft_putstr("\n");
+	//	ft_putstr("b_tet_row[");
+	//	ft_putnbr(i);
+	//	ft_putstr("]: ");
+	//	print_bin(b_tet_row[i], 4, 64);  
+	//	ft_putstr("\n");
 		s[row + i] = s[row + i] | b_tet_row[i];
 		++i;
 	}

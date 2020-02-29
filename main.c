@@ -6,11 +6,22 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 14:20:37 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/29 14:14:44 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/02/29 15:02:20 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
+
+int	all_tets_placed(t_tet **b_tets)
+{
+	while(*b_tets)
+	{
+		if ((*b_tets)->col == -1 || (*b_tets)->row == -1)
+			return (0);
+		++b_tets;
+	}
+	return (1);
+}
 
 int	main(int argc, char **argv)
 {
@@ -60,7 +71,7 @@ int	main(int argc, char **argv)
 		set_bounds(&col_bounds, &row_bounds, calc_min_square_size(total_bits));
 		total_tets = (total_bits / 4);
 		add_bounds_to_square(square, row_bounds);
-		while (!solve_square(row_bounds, square, b_tets, 1))
+		while (!solve_square(row_bounds, square, b_tets, 1) || !all_tets_placed(b_tets))
 		{
 			++row_bounds;
 			++col_bounds;

@@ -6,7 +6,7 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 16:44:33 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/29 14:30:00 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/02/29 15:07:32 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,17 +91,13 @@ void	print_solution(t_u64b *s, t_tet **b_tets, int bounds)
 
 int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, int call)
 {
-	int		i;
 	int		col;
 	int		row;
-	int		placed_tet;
 
 	if (count_b_tets(b_tets) == 0)
 		return (1);
 
-	i = 0;
-	placed_tet = -1;
-	while (b_tets[i])
+	while (*b_tets)
 	{
 		row = 0;
 		while (row < bounds)
@@ -109,68 +105,60 @@ int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, int call)
 			col = 0;
 			while (col < bounds)
 			{
-				if (can_place_tet(col, row, s, b_tets[i]->data))
+				if (can_place_tet(col, row, s, (*b_tets)->data))
 				{
-					placed_tet = i;
-					b_tets[i]->col = col;
-					b_tets[i]->row = row;
-
-					ft_putstr("\nplacing tet:\nb_tets[");
-					ft_putnbr(i);
-					ft_putstr("]->data = ");
-					print_bin(b_tets[i]->data, 4, 16);
+					(*b_tets)->col = col;
+					(*b_tets)->row = row;
+/*
+					ft_putstr("\nplacing tet:\nb_tet");
+					ft_putstr("->data = ");
+					print_bin((*b_tets)->data, 4, 16);
 					ft_putstr("\n");
 
-					ft_putstr("b_tets[");
-					ft_putnbr(i);
-					ft_putstr("]->col = ");
-					ft_putnbr(b_tets[i]->col);
+					ft_putstr("b_tet");
+					ft_putstr("->col = ");
+					ft_putnbr((*b_tets)->col);
 
-					ft_putstr("\nb_tets[");
-					ft_putnbr(i);
-					ft_putstr("]->row = ");
-					ft_putnbr(b_tets[i]->row);
+					ft_putstr("\nb_tet");
+					ft_putstr("->row = ");
+					ft_putnbr((*b_tets)->row);
 					ft_putstr("\n");
-					place_tet(col, row, s, b_tets[i]->data);
+*/
+
+					place_tet(col, row, s, (*b_tets)->data);
+/*
 					print_overlay(s, 10, bounds, 64);
 					print_solution(s, b_tets, bounds);
-
-					--i;
-					if (solve_square(bounds, s, ++b_tets, call + 1))
+*/
+					if (solve_square(bounds, s, b_tets + 1, call + 1))
 						return (1);
-
-					--b_tets;
-					++i;
-
-					ft_putstr("\nun placing tet:\nb_tets[");
-					ft_putnbr(placed_tet);
-					ft_putstr("]->data = ");
-					print_bin(b_tets[placed_tet]->data, 4, 16);
+/*
+					ft_putstr("\nun placing tet:\nb_tet");
+					ft_putstr("->data = ");
+					print_bin((*b_tets)->data, 4, 16);
 					ft_putstr("\n");
 
-					ft_putstr("b_tets[");
-					ft_putnbr(placed_tet);
-					ft_putstr("]->col = ");
-					ft_putnbr(b_tets[placed_tet]->col);
+					ft_putstr("b_tet");
+					ft_putstr("->col = ");
+					ft_putnbr((*b_tets)->col);
 
-					ft_putstr("\nb_tets[");
-					ft_putnbr(placed_tet);
-					ft_putstr("]->row = ");
-					ft_putnbr(b_tets[placed_tet]->row);
+					ft_putstr("\nb_tet");
+					ft_putstr("->row = ");
+					ft_putnbr((*b_tets)->row);
 					ft_putstr("\n");
-
-					if (b_tets[placed_tet]->col > -1 && b_tets[placed_tet]->row > -1)
-						unplace_tet(s, b_tets[placed_tet]);
-					b_tets[placed_tet]->col = -1;
-					b_tets[placed_tet]->row = -1;
-					print_overlay(s, 10, bounds, 64);
-					print_solution(s, b_tets, bounds);
+*/
+					if ((*b_tets)->col > -1 && (*b_tets)->row > -1)
+						unplace_tet(s, (*b_tets));
+					(*b_tets)->col = -1;
+					(*b_tets)->row = -1;
+//					print_overlay(s, 10, bounds, 64);
+//					print_solution(s, b_tets, bounds);
 				}
 				++col;
 			}
 			++row;
 		}
-		++i;
+		++b_tets;
 	}
 	return (0);
 }
