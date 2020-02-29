@@ -6,7 +6,7 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 14:20:37 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/28 19:58:22 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/02/29 14:14:44 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ int	main(int argc, char **argv)
 			print_bin(b_tets[i]->data, 4, 16);
 			ft_putchar('\n');
 			total_bits += count_bits(b_tets[i]->data);
-			b_tets[i]->col = 0;
-			b_tets[i]->row = 0;
+			b_tets[i]->col = -1;
+			b_tets[i]->row = -1;
 			b_tets[i]->c = tet_c++;
 			++i;
 		}
