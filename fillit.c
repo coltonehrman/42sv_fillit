@@ -6,11 +6,10 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/23 14:08:06 by cehrman           #+#    #+#             */
-/*   Updated: 2020/03/01 14:11:35 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/03/01 16:44:49 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include "fillit.h"
 
 t_u16b	tet_to_bin(char *tet)
@@ -57,20 +56,19 @@ t_u8b	get_row_of_tet(t_u16b tet, int row)
 
 int		can_shift_tet(t_u16b tet)
 {
-	t_u8b row[4];
+	t_u8b	row[4];
 
 	row[0] = get_row_of_tet(tet, 1);
 	row[1] = get_row_of_tet(tet, 2);
 	row[2] = get_row_of_tet(tet, 3);
 	row[3] = get_row_of_tet(tet, 4);
-
 	return (!(row[0] & 0x08) && !(row[1] & 0x08) &&
 			!(row[2] & 0x08) && !(row[3] & 0x08));
 }
 
 int		count_bits(t_u16b b)
 {
-	int c;
+	int	c;
 
 	c = 0;
 	while (b > 0)
@@ -86,14 +84,13 @@ t_u16b	compress_tet(t_u16b tet)
 {
 	t_u16b	shifted;
 	t_u8b	row[4];
-	int				i;
+	int		i;
 
 	shifted = tet;
 	row[0] = get_row_of_tet(tet, 1);
 	row[1] = get_row_of_tet(tet, 2);
 	row[2] = get_row_of_tet(tet, 3);
 	row[3] = get_row_of_tet(tet, 4);
-
 	i = 0;
 	while (i < 4)
 	{
@@ -103,21 +100,18 @@ t_u16b	compress_tet(t_u16b tet)
 			break ;
 		i++;
 	}
-
 	while (can_shift_tet(shifted))
 		shifted <<= 1;
-
 	return (shifted);
 }
 
-
-void		init_overlay(t_u64b *s, int size)
+void	init_overlay(t_u64b *s, int size)
 {
 	while (size-- > 0)
 		s[size] = 0x0;
 }
 
-int			find_next_open_bit(t_u64b s)
+int		find_next_open_bit(t_u64b s)
 {
 	t_u64b	start;
 	int		pos;
@@ -134,27 +128,24 @@ int			find_next_open_bit(t_u64b s)
 	return (pos - 1);
 }
 
-void		create_tet_overlay(t_u64b *overlay, t_u16b b_tet)
+void	create_tet_overlay(t_u64b *overlay, t_u16b b_tet)
 {
 	t_u64b	row;
-	int					i;
+	int		i;
 
 	init_overlay(overlay, 64);
 	b_tet = compress_tet(b_tet);
-	
 	i = 0;
 	while (i < 4)
 	{
 		row = 0x0;
-		// return t_u8b 0000 0000
 		row = get_row_of_tet(b_tet, i + 1);
-		// shift over to end of overlay
 		row <<= 60;
 		overlay[i++] = row;
 	}
 }
 
-void		set_overlays(t_u64b *o1, t_u64b *o2, int size)
+void	set_overlays(t_u64b *o1, t_u64b *o2, int size)
 {
 	int i;
 
@@ -166,10 +157,10 @@ void		set_overlays(t_u64b *o1, t_u64b *o2, int size)
 	}
 }
 
-int			overlays_overlap(t_u64b *o1, t_u64b *o2, int size)
+int		overlays_overlap(t_u64b *o1, t_u64b *o2, int size)
 {
 	int	i;
-	
+
 	i = 0;
 	while (i < size)
 	{
@@ -180,7 +171,7 @@ int			overlays_overlap(t_u64b *o1, t_u64b *o2, int size)
 	return (0);
 }
 
-int			in_col_bounds(t_u64b *overlay, t_u64b col_bounds, int size)
+int		in_col_bounds(t_u64b *overlay, t_u64b col_bounds, int size)
 {
 	int	i;
 
@@ -194,7 +185,7 @@ int			in_col_bounds(t_u64b *overlay, t_u64b col_bounds, int size)
 	return (1);
 }
 
-int			in_row_bounds(t_u64b *overlay, int row_bounds, int size)
+int		in_row_bounds(t_u64b *overlay, int row_bounds, int size)
 {
 	int	i;
 
@@ -208,19 +199,19 @@ int			in_row_bounds(t_u64b *overlay, int row_bounds, int size)
 	return (1);
 }
 
-int			in_bounds(t_u64b *overlay, t_u64b col_bounds, int row_bounds)
+int		in_bounds(t_u64b *overlay, t_u64b col_bounds, int row_bounds)
 {
 	return (in_col_bounds(overlay, col_bounds, 64)
 			&& in_row_bounds(overlay, row_bounds, 64));
 }
 
-void		shift_tet_overlay_down(t_u64b *overlay, int size)
+void	shift_tet_overlay_down(t_u64b *overlay, int size)
 {
 	t_u64b	prev;
 	t_u64b	curr;
 	t_u64b	next;
-	int					i;
-	
+	int		i;
+
 	i = 0;
 	prev = 0x0;
 	curr = overlay[i];
@@ -232,11 +223,11 @@ void		shift_tet_overlay_down(t_u64b *overlay, int size)
 		overlay[i + 1] = curr;
 		prev = overlay[i + 2];
 		overlay[i + 2] = next;
-		i+= 3;
+		i += 3;
 	}
 }
 
-int			shift_tet_overlay_right(t_u64b *overlay, int size)
+int		shift_tet_overlay_right(t_u64b *overlay, int size)
 {
 	int	i;
 
@@ -246,9 +237,9 @@ int			shift_tet_overlay_right(t_u64b *overlay, int size)
 	return (1);
 }
 
-int			shift_tet_overlay_far_left(t_u64b *overlay, int size)
+int		shift_tet_overlay_far_left(t_u64b *overlay, int size)
 {
-	int i;
+	int	i;
 	int	can_shift;
 
 	can_shift = 1;
@@ -260,7 +251,7 @@ int			shift_tet_overlay_far_left(t_u64b *overlay, int size)
 			if (overlay[i] & 0x8000000000000000)
 			{
 				can_shift = 0;
-				break;
+				break ;
 			}
 			i++;
 		}
@@ -274,7 +265,7 @@ int			shift_tet_overlay_far_left(t_u64b *overlay, int size)
 	return (1);
 }
 
-t_u64b		*push_tet_in_square(t_u64b *s, t_u16b b_tet, t_u64b *col_bounds, int *row_bounds)
+t_u64b	*push_tet_in_square(t_u64b *s, t_u16b b_tet, t_u64b *col_bounds, int *row_bounds)
 {
 	t_u64b	*tet_overlay;
 
@@ -299,11 +290,9 @@ t_u64b		*push_tet_in_square(t_u64b *s, t_u16b b_tet, t_u64b *col_bounds, int *ro
 	return (tet_overlay);
 }
 
-int			calc_min_square_size(int total_bits)
+int		calc_min_square_size(int total_bits)
 {
-	int square;
-
-	//printf("total_bits: %d\n", total_bits);
+	int	square;
 
 	square = 2;
 	while ((square * square) < total_bits)
@@ -311,57 +300,52 @@ int			calc_min_square_size(int total_bits)
 	return (square);
 }
 
-void		set_bounds(t_u64b *col_bounds, int *row_bounds, int square)
+void	set_bounds(t_u64b *col_bounds, int *row_bounds, int square)
 {
-	//printf("square: %d\n", square);
 	*col_bounds = (0xFFFFFFFFFFFFFFFF >> square);
 	*row_bounds = square;
 }
 
-t_u16b		create_section(int col, int row, t_u64b *s)
+t_u16b	create_section(int col, int row, t_u64b *s)
 {
-	t_u16b temp;
-	t_u16b section;
+	t_u16b	temp;
+	t_u16b	section;
 
 	section = 0;
 	temp = 0;
 	temp = s[row] >> (60 - col);
 	section = section | (temp << 12);
-
 	temp = 0;
 	temp = s[row + 1] >> (60 - col);
 	temp <<= 12;
 	section = section | (temp >> 4);
-	
 	temp = 0;
 	temp = s[row + 2] >> (60 - col);
 	temp <<= 12;
 	section = section | (temp >> 8);
-	
 	temp = 0;
 	temp = s[row + 3] >> (60 - col);
 	temp <<= 12;
 	section = section | (temp >> 12);
-	
 	return (section);
 }
 
-int			can_place_tet(int col, int row, t_u64b *s, t_u16b b_tet)
+int		can_place_tet(int col, int row, t_u64b *s, t_u16b b_tet)
 {
 	t_u16b	b_section;
-	// check overlap
+
 	b_tet = compress_tet(b_tet);
 	b_section = create_section(col, row, s);
 	return (!(b_tet & b_section));
 }
 
-int			can_place_tet_in_row(int row, int bounds, t_u64b *s, t_u16b b_tet)
+int		can_place_tet_in_row(int row, int bounds, t_u64b *s, t_u16b b_tet)
 {
 	t_u16b	b_section;
-	int		i = 0;
+	int		i;
 
+	i = 0;
 	b_tet = compress_tet(b_tet);
-
 	while (i < bounds)
 	{
 		b_section = create_section(i, row, s);
@@ -372,11 +356,11 @@ int			can_place_tet_in_row(int row, int bounds, t_u64b *s, t_u16b b_tet)
 	return (0);
 }
 
-int			can_place_tet_in_square(int bounds, t_u64b *s, t_u16b b_tet)
+int		can_place_tet_in_square(int bounds, t_u64b *s, t_u16b b_tet)
 {
 	t_u16b	b_section;
-	int	i;
-	int	row;
+	int		i;
+	int		row;
 
 	row = 0;
 	b_tet = compress_tet(b_tet);
@@ -395,7 +379,7 @@ int			can_place_tet_in_square(int bounds, t_u64b *s, t_u16b b_tet)
 	return (0);
 }
 
-t_u64b		create_btet_row(int col, int row, t_u16b b_tet)
+t_u64b	create_btet_row(int col, int row, t_u16b b_tet)
 {
 	t_u64b	b_tet_row;
 
@@ -405,56 +389,36 @@ t_u64b		create_btet_row(int col, int row, t_u16b b_tet)
 	return (b_tet_row);
 }
 
-void		place_tet(int col, int row, t_u64b *s, t_u16b b_tet)
+void	place_tet(int col, int row, t_u64b *s, t_u16b b_tet)
 {
 	t_u64b	b_tet_row[4];
-	int		i = 0;
+	int		i;
 
+	i = 0;
 	b_tet_row[0] = create_btet_row(col, 1, b_tet);
 	b_tet_row[1] = create_btet_row(col, 2, b_tet);
 	b_tet_row[2] = create_btet_row(col, 3, b_tet);
 	b_tet_row[3] = create_btet_row(col, 4, b_tet);
-	//ft_putstr("b_tet: ");
-	//print_bin(b_tet, 4, 16);
-	//ft_putstr("\n");
-
-	/*
 	i = 0;
 	while (i < 4)
 	{
-		ft_putstr("s_row[");
-		ft_putnbr(row + i);
-		ft_putstr("]: ");
-		print_bin(s[row + i], 4, 64);  
-		ft_putstr("\n");
-		++i;
-	}
-	*/
-	i = 0;
-	while (i < 4)
-	{
-	//	ft_putstr("b_tet_row[");
-	//	ft_putnbr(i);
-	//	ft_putstr("]: ");
-	//	print_bin(b_tet_row[i], 4, 64);  
-	//	ft_putstr("\n");
 		s[row + i] = s[row + i] | b_tet_row[i];
 		++i;
 	}
 }
 
-void		unplace_tet(t_u64b *s, t_tet *b_tet)
+void	unplace_tet(t_u64b *s, t_tet *b_tet)
 {
 	t_u64b	b_tet_row[4];
 	t_u16b	b_tet_data;
-	int		i = 0;
+	int		i;
 
+	i = 0;
 	b_tet_data = compress_tet(b_tet->data);
 	b_tet_row[0] = create_btet_row(b_tet->col, 1, b_tet_data);
 	b_tet_row[1] = create_btet_row(b_tet->col, 2, b_tet_data);
 	b_tet_row[2] = create_btet_row(b_tet->col, 3, b_tet_data);
 	b_tet_row[3] = create_btet_row(b_tet->col, 4, b_tet_data);
-
 	while (i < 4)
 	{
 		s[b_tet->row + i] = s[b_tet->row + i] ^ b_tet_row[i];
@@ -462,11 +426,11 @@ void		unplace_tet(t_u64b *s, t_tet *b_tet)
 	}
 }
 
-int			find_next_col(t_u64b s_row)
+int		find_next_col(t_u64b s_row)
 {
 	t_u64b	mask;
 	int		pos;
-	
+
 	mask = 0x8000000000000000;
 	pos = 0;
 	while ((s_row & mask) && pos != 63)
@@ -477,31 +441,17 @@ int			find_next_col(t_u64b s_row)
 	return ((pos == 63) ? -1 : pos);
 }
 
-int			count_b_tets(t_tet **b_tets)
+int		count_b_tets(t_tet **b_tets)
 {
-	int i = 0;
+	int i;
+
+	i = 0;
 	while (b_tets[i++])
 		;
 	return (i - 1);
 }
 
-void			add_spacing(int call, int right)
-{	int i = 1;
-	while (i < call)
-	{
-		ft_putstr("  ");
-		i++;
-	}
-	if (right)
-		ft_putstr("-->");
-	else
-		ft_putstr("<--");
-	ft_putstr(" [");
-	ft_putnbr(call);
-	ft_putstr("] ");
-}
-
-int			get_num_strings(char **matrix)
+int		get_num_strings(char **matrix)
 {
 	int	i;
 
@@ -511,7 +461,7 @@ int			get_num_strings(char **matrix)
 	return (i - 1);
 }
 
-void		add_bounds_to_square(t_u64b *s, int bounds)
+void	add_bounds_to_square(t_u64b *s, int bounds)
 {
 	t_u64b	col_mask;
 	t_u64b	row_mask;

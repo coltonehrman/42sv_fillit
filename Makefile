@@ -19,3 +19,6 @@ all: $(NAME)
 
 clean:
 	rm -f $(OBJ) $(NAME) $(DEBUG_NAME)
+
+fclean:
+	rm -f $(NAME) $(DEBUG_NAME)

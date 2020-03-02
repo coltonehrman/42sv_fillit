@@ -1,28 +1,37 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   unused_funcs.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/03/01 16:48:37 by cehrman           #+#    #+#             */
+/*   Updated: 2020/03/01 16:59:02 by cehrman          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fillit.h"
 
 int		number_of_tets(char *tetriminos)
 {
 	char	**tets;
 	int		i;
-	
-	// split on new line to get each individual tetrimino
+
 	tets = ft_strsplit(tetriminos, '\n');
 	i = 0;
 	while (tets[i++])
 		;
-	// free memory from split
 	free_matrix(&tets);
 	return (i - 1);
 }
 
 int		left_most_bit(t_u64b n)
 {
-	int pos;
+	int	pos;
 
 	pos = 65;
 	while (pos-- > 0)
 	{
-		// 0x8000 0000 0000 0000 is 64 bit binary with left most bit set to 1
 		if (0x8000000000000000 & n)
 			return (pos);
 		n <<= 1;
@@ -45,7 +54,6 @@ t_u16b	shift_to_corner(t_u16b corner, t_u16b tet)
 	t_u16b shifted;
 
 	shifted = tet;
-
 	while (!(shifted & corner))
 		shifted = shifted << 1;
 	return (shifted);
@@ -53,10 +61,10 @@ t_u16b	shift_to_corner(t_u16b corner, t_u16b tet)
 
 void	print_overlays(t_u64b *s, int s_size, t_u64b **layers, t_u64b col_b, int row_b)
 {
-	int	i;
-	int j;
-	int	printed_char;
-	t_u64b col;
+	t_u64b	col;
+	int		printed_char;
+	int		i;
+	int		j;
 
 	i = 0;
 	while (i < s_size && i < row_b)
