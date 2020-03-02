@@ -6,7 +6,7 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/23 14:08:06 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/29 15:06:40 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/03/01 14:11:35 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,32 +110,6 @@ t_u16b	compress_tet(t_u16b tet)
 	return (shifted);
 }
 
-void		read_tets(int fd, char **tets)
-{
-	char	*line;
-	char	*tmp;
-
-	// parse each line
-	while (get_next_line(fd, &line) > 0)
-	{
-		if (!(*line))
-		{
-			free(line);
-			// new tetrimino incoming
-			tmp = *tets;
-			*tets = ft_strjoin(tmp, "\n");
-			free(tmp);
-		}
-		else
-		{
-			tmp = *tets;
-			*tets = ft_strjoin(tmp, line);
-			free(line);
-			free(tmp);
-			tmp = 0;
-		}
-	}
-}
 
 void		init_overlay(t_u64b *s, int size)
 {
@@ -329,7 +303,7 @@ int			calc_min_square_size(int total_bits)
 {
 	int square;
 
-	printf("total_bits: %d\n", total_bits);
+	//printf("total_bits: %d\n", total_bits);
 
 	square = 2;
 	while ((square * square) < total_bits)
@@ -339,7 +313,7 @@ int			calc_min_square_size(int total_bits)
 
 void		set_bounds(t_u64b *col_bounds, int *row_bounds, int square)
 {
-	printf("square: %d\n", square);
+	//printf("square: %d\n", square);
 	*col_bounds = (0xFFFFFFFFFFFFFFFF >> square);
 	*row_bounds = square;
 }

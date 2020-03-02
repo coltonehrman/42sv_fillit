@@ -6,7 +6,7 @@
 /*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 16:44:33 by cehrman           #+#    #+#             */
-/*   Updated: 2020/02/29 15:07:32 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/03/01 13:03:41 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,16 +48,6 @@ t_tet	*find_tet_in(int col, int row, t_tet **b_tets)
 	}
 	return (0);
 }
-
-/*
-
-AABBE.
-AA.BE.
-...BE.
-CCCCE.
-D
-
-*/
 
 void	print_solution(t_u64b *s, t_tet **b_tets, int bounds)
 {
