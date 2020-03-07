@@ -13,7 +13,7 @@ $(NAME): $(OBJ)
 $(DEBUG_NAME): $(OBJ) $(DEBUG_FILES:.c=.o)
 	$(CC) $(CFLAGS) -o $(DEBUG_NAME) $^ $(LIBFT)
 
-.PHONY: all clean
+.PHONY: all clean fclean re
 
 all: $(NAME)
 
@@ -22,3 +22,5 @@ clean:
 
 fclean:
 	rm -f $(NAME) $(DEBUG_NAME)
+
+re: fclean all

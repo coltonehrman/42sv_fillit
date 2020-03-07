@@ -17,10 +17,11 @@ int		read_file(char *file, char **data)
 	char	*line;
 	char	*tmp;
 	int		fd;
+	int		res;
 
-	if ((fd = open(file, O_RDONLY)) <= 0)
+	if ((fd = open(file, O_RDONLY)) < 0)
 		return (0);
-	while (get_next_line(fd, &line) > 0)
+	while ((res = get_next_line(fd, &line) > 0))
 	{
 		if (!(*line))
 		{
@@ -38,7 +39,7 @@ int		read_file(char *file, char **data)
 			tmp = 0;
 		}
 	}
-	return (1);
+	return ((res == -1) ? -1 : 1);
 }
 
 int		all_tets_placed(t_tet **b_tets)
@@ -52,6 +53,19 @@ int		all_tets_placed(t_tet **b_tets)
 	return (1);
 }
 
+int		check_file_split(char **file_split)
+{
+	int i;
+
+	i = 0;
+	while (file_split[i])
+	{
+		if (ft_strlen(file_split[i]) != 16)
+			return (0);
+	}
+	return (1);
+}
+
 t_tet	**parse_file_data(char **file_data, int *total_bits)
 {
 	t_tet	**tets;
@@ -61,6 +75,8 @@ t_tet	**parse_file_data(char **file_data, int *total_bits)
 
 	file_split = ft_strsplit(*file_data, '\n');
 	ft_memdel((void **)file_data);
+	if (!check_file_split(file_split))
+		return (0);
 	if (!(tets = (t_tet **)malloc(sizeof(t_tet *) *
 					(get_num_strings(file_split) + 1))))
 		return (0);
@@ -81,6 +97,13 @@ t_tet	**parse_file_data(char **file_data, int *total_bits)
 	return (tets);
 }
 
+/*
+int		check_invalid_tets(t_tet **tests)
+{
+
+}
+*/
+
 int		main(int argc, char **argv)
 {
 	t_u64b	square[64];
@@ -88,18 +111,17 @@ int		main(int argc, char **argv)
 	t_tet	**tets;
 	char	*file_data;
 	int		row_bounds;
-	int		total_tets;
 	int		total_bits;
 
 	if (argc != 2)
 		return (0);
 	file_data = ft_strnew(0);
 	if (!read_file(argv[1], &file_data))
-		return (1);
-	tets = parse_file_data(&file_data, &total_bits);
+		return (write(1, "error\n", 6));
+	if (!(tets = parse_file_data(&file_data, &total_bits)))
+		return (write(1, "error\n", 6));
 	init_overlay(square, 64);
 	set_bounds(&col_bounds, &row_bounds, calc_min_square_size(total_bits));
-	total_tets = (total_bits / 4);
 	add_bounds_to_square(square, row_bounds);
 	while (!solve_square(row_bounds, square, tets, 1) || !all_tets_placed(tets))
 	{
