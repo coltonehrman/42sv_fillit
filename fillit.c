@@ -300,12 +300,6 @@ int		calc_min_square_size(int total_bits)
 	return (square);
 }
 
-void	set_bounds(t_u64b *col_bounds, int *row_bounds, int square)
-{
-	*col_bounds = (0xFFFFFFFFFFFFFFFF >> square);
-	*row_bounds = square;
-}
-
 t_u16b	create_section(int col, int row, t_u64b *s)
 {
 	t_u16b	temp;
@@ -387,43 +381,6 @@ t_u64b	create_btet_row(int col, int row, t_u16b b_tet)
 	b_tet_row = get_row_of_tet(b_tet, row);
 	b_tet_row <<= (60 - col);
 	return (b_tet_row);
-}
-
-void	place_tet(int col, int row, t_u64b *s, t_u16b b_tet)
-{
-	t_u64b	b_tet_row[4];
-	int		i;
-
-	i = 0;
-	b_tet_row[0] = create_btet_row(col, 1, b_tet);
-	b_tet_row[1] = create_btet_row(col, 2, b_tet);
-	b_tet_row[2] = create_btet_row(col, 3, b_tet);
-	b_tet_row[3] = create_btet_row(col, 4, b_tet);
-	i = 0;
-	while (i < 4)
-	{
-		s[row + i] = s[row + i] | b_tet_row[i];
-		++i;
-	}
-}
-
-void	unplace_tet(t_u64b *s, t_tet *b_tet)
-{
-	t_u64b	b_tet_row[4];
-	t_u16b	b_tet_data;
-	int		i;
-
-	i = 0;
-	b_tet_data = compress_tet(b_tet->data);
-	b_tet_row[0] = create_btet_row(b_tet->col, 1, b_tet_data);
-	b_tet_row[1] = create_btet_row(b_tet->col, 2, b_tet_data);
-	b_tet_row[2] = create_btet_row(b_tet->col, 3, b_tet_data);
-	b_tet_row[3] = create_btet_row(b_tet->col, 4, b_tet_data);
-	while (i < 4)
-	{
-		s[b_tet->row + i] = s[b_tet->row + i] ^ b_tet_row[i];
-		++i;
-	}
 }
 
 int		find_next_col(t_u64b s_row)

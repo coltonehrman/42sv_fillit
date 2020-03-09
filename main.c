@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: cehrman <cehrman@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 14:20:37 by cehrman           #+#    #+#             */
-/*   Updated: 2020/03/01 16:31:55 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/03/08 20:44:29 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,19 +25,16 @@ int		read_file(char *file, char **data)
 	{
 		if (!(*line))
 		{
-			free(line);
 			tmp = *data;
 			*data = ft_strjoin(tmp, "\n");
-			free(tmp);
 		}
 		else
 		{
 			tmp = *data;
 			*data = ft_strjoin(tmp, line);
-			free(line);
-			free(tmp);
-			tmp = 0;
 		}
+		ft_strdel(&line);
+		ft_strdel(&tmp);
 	}
 	return ((res == -1) ? -1 : 1);
 }
@@ -53,17 +50,16 @@ int		all_tets_placed(t_tet **b_tets)
 	return (1);
 }
 
-int		check_file_split(char **file_split)
+t_tet	*create_tet(char *tet_str, char c)
 {
-	int i;
+	t_tet	*tet;
 
-	i = 0;
-	while (file_split[i])
-	{
-		if (ft_strlen(file_split[i]) != 16)
-			return (0);
-	}
-	return (1);
+	tet = (t_tet *)malloc(sizeof(t_tet));
+	tet->data = tet_to_bin(tet_str);
+	tet->col = -1;
+	tet->row = -1;
+	tet->c = c;
+	return (tet);
 }
 
 t_tet	**parse_file_data(char **file_data, int *total_bits)
@@ -74,62 +70,50 @@ t_tet	**parse_file_data(char **file_data, int *total_bits)
 	int		i;
 
 	file_split = ft_strsplit(*file_data, '\n');
-	ft_memdel((void **)file_data);
+	ft_strdel(file_data);
 	if (!check_file_split(file_split))
 		return (0);
 	if (!(tets = (t_tet **)malloc(sizeof(t_tet *) *
-					(get_num_strings(file_split) + 1))))
+				(get_num_strings(file_split) + 1))))
 		return (0);
 	i = 0;
 	c = 'A';
 	*total_bits = 0;
 	while (file_split[i])
 	{
-		tets[i] = (t_tet *)malloc(sizeof(t_tet));
-		tets[i]->data = tet_to_bin(file_split[i]);
-		*total_bits += count_bits(tets[i]->data);
-		tets[i]->col = -1;
-		tets[i]->row = -1;
-		tets[i++]->c = c++;
+		tets[i] = create_tet(file_split[i], c++);
+		++i;
 	}
 	tets[i] = 0;
 	free_matrix(&file_split);
 	return (tets);
 }
 
-/*
-int		check_invalid_tets(t_tet **tests)
-{
-
-}
-*/
-
 int		main(int argc, char **argv)
 {
-	t_u64b	square[64];
-	t_u64b	col_bounds;
-	t_tet	**tets;
-	char	*file_data;
-	int		row_bounds;
+	int		bounds;
 	int		total_bits;
+	char	*file_data;
+	t_tet	**tets;
+	t_u64b	square[64];
 
 	if (argc != 2)
 		return (0);
 	file_data = ft_strnew(0);
-	if (!read_file(argv[1], &file_data))
+	if (!read_file(argv[1], &file_data) ||
+		file_data[ft_strlen(file_data) - 1] == '\n')
 		return (write(1, "error\n", 6));
 	if (!(tets = parse_file_data(&file_data, &total_bits)))
 		return (write(1, "error\n", 6));
 	init_overlay(square, 64);
-	set_bounds(&col_bounds, &row_bounds, calc_min_square_size(total_bits));
-	add_bounds_to_square(square, row_bounds);
-	while (!solve_square(row_bounds, square, tets, 1) || !all_tets_placed(tets))
+	bounds = calc_min_square_size(total_bits);
+	add_bounds_to_square(square, bounds);
+	while (!solve_square(bounds, square, tets, 1) || !all_tets_placed(tets))
 	{
-		++row_bounds;
-		++col_bounds;
+		++bounds;
 		init_overlay(square, 64);
-		add_bounds_to_square(square, row_bounds);
+		add_bounds_to_square(square, bounds);
 	}
-	print_solution(square, tets, row_bounds);
+	print_solution(square, tets, bounds);
 	return (0);
 }

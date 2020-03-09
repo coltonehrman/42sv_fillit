@@ -66,6 +66,45 @@ void	print_solution(t_u64b *s, t_tet **b_tets, int bounds)
 	}
 }
 
+void	place_tet(int col, int row, t_u64b *s, t_tet *b_tet)
+{
+	t_u64b	b_tet_row[4];
+	int		i;
+
+	i = 0;
+	b_tet_row[0] = create_btet_row(col, 1, b_tet->data);
+	b_tet_row[1] = create_btet_row(col, 2, b_tet->data);
+	b_tet_row[2] = create_btet_row(col, 3, b_tet->data);
+	b_tet_row[3] = create_btet_row(col, 4, b_tet->data);
+	i = 0;
+	while (i < 4)
+	{
+		s[row + i] = s[row + i] | b_tet_row[i];
+		++i;
+	}
+	b_tet->col = col;
+	b_tet->row = row;
+}
+
+void	unplace_tet(t_u64b *s, t_tet *b_tet)
+{
+	t_u64b	b_tet_row[4];
+	int		i;
+
+	i = 0;
+	b_tet_row[0] = create_btet_row(b_tet->col, 1, b_tet->data);
+	b_tet_row[1] = create_btet_row(b_tet->col, 2, b_tet->data);
+	b_tet_row[2] = create_btet_row(b_tet->col, 3, b_tet->data);
+	b_tet_row[3] = create_btet_row(b_tet->col, 4, b_tet->data);
+	while (i < 4)
+	{
+		s[b_tet->row + i] = s[b_tet->row + i] ^ b_tet_row[i];
+		++i;
+	}
+	b_tet->col = -1;
+	b_tet->row = -1;
+}
+
 int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, int call)
 {
 	int	col;
@@ -83,15 +122,11 @@ int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, int call)
 			{
 				if (can_place_tet(col, row, s, (*b_tets)->data))
 				{
-					(*b_tets)->col = col;
-					(*b_tets)->row = row;
-					place_tet(col, row, s, (*b_tets)->data);
+					place_tet(col, row, s, *b_tets);
 					if (solve_square(bounds, s, b_tets + 1, call + 1))
 						return (1);
 					if ((*b_tets)->col > -1 && (*b_tets)->row > -1)
-						unplace_tet(s, (*b_tets));
-					(*b_tets)->col = -1;
-					(*b_tets)->row = -1;
+						unplace_tet(s, *b_tets);
 				}
 				++col;
 			}
