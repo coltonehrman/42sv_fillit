@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   solve_square.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: cehrman <cehrman@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 16:44:33 by cehrman           #+#    #+#             */
-/*   Updated: 2020/03/01 16:48:11 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/03/09 02:54:36 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,14 +105,19 @@ void	unplace_tet(t_u64b *s, t_tet *b_tet)
 	b_tet->row = -1;
 }
 
-int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, int call)
+#include <stdio.h>
+
+int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, t_tet **all_btets)
 {
 	int	col;
 	int	row;
+	int	i;
 
-	if (count_b_tets(b_tets) == 0)
+	//printf("b_tets left: %d\n", count_b_tets(b_tets));
+	if (all_tets_placed(all_btets))
 		return (1);
-	while (*b_tets)
+	i = 0;
+	while (b_tets[i])
 	{
 		row = 0;
 		while (row < bounds)
@@ -120,19 +125,25 @@ int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, int call)
 			col = 0;
 			while (col < bounds)
 			{
-				if (can_place_tet(col, row, s, (*b_tets)->data))
+				if (can_place_tet(col, row, s, (b_tets[i]->data)))
 				{
-					place_tet(col, row, s, *b_tets);
-					if (solve_square(bounds, s, b_tets + 1, call + 1))
+					//printf("placing tet\n");
+					place_tet(col, row, s, b_tets[i]);
+					//print_overlay(s, bounds, bounds, 64);
+					//print_solution(s, all_btets, bounds);
+					if (solve_square(bounds, s, b_tets + i + 1, all_btets))
 						return (1);
-					if ((*b_tets)->col > -1 && (*b_tets)->row > -1)
-						unplace_tet(s, *b_tets);
+					if (b_tets[i]->col > -1 && b_tets[i]->row > -1)
+					{
+						//printf("UNplacing tet\n");
+						unplace_tet(s, b_tets[i]);
+					}
 				}
 				++col;
 			}
 			++row;
 		}
-		++b_tets;
+		++i;
 	}
 	return (0);
 }

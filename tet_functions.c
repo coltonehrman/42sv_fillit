@@ -6,11 +6,22 @@
 /*   By: cehrman <cehrman@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/09 01:23:49 by cehrman           #+#    #+#             */
-/*   Updated: 2020/03/09 01:23:55 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/03/09 02:50:41 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
+
+int		all_tets_placed(t_tet **b_tets)
+{
+	while (*b_tets)
+	{
+		if ((*b_tets)->col == -1 || (*b_tets)->row == -1)
+			return (0);
+		++b_tets;
+	}
+	return (1);
+}
 
 t_tet	*create_tet(char *tet_str, char c)
 {

@@ -6,22 +6,11 @@
 /*   By: cehrman <cehrman@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 14:20:37 by cehrman           #+#    #+#             */
-/*   Updated: 2020/03/09 02:06:01 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/03/09 02:50:33 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
-
-int		all_tets_placed(t_tet **b_tets)
-{
-	while (*b_tets)
-	{
-		if ((*b_tets)->col == -1 || (*b_tets)->row == -1)
-			return (0);
-		++b_tets;
-	}
-	return (1);
-}
 
 /*
 **	1) read from file
@@ -52,7 +41,7 @@ int		main(int argc, char **argv)
 	init_overlay(square, 64);
 	bounds = calc_min_square_size(total_bits);
 	add_bounds_to_square(square, bounds);
-	while (!solve_square(bounds, square, tets, 1) || !all_tets_placed(tets))
+	while (!solve_square(bounds, square, tets, tets) || !all_tets_placed(tets))
 	{
 		++bounds;
 		init_overlay(square, 64);

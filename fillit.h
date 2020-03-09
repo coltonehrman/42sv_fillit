@@ -6,7 +6,7 @@
 /*   By: cehrman <cehrman@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/23 14:08:22 by cehrman           #+#    #+#             */
-/*   Updated: 2020/03/09 01:32:11 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/03/09 02:50:55 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ t_tet						**parse_file_data(char **file_data, int *total_bits);
 **	TETRIMINO FUNCTIONS
 */
 
+
+int							all_tets_placed(t_tet **b_tets);
 t_tet						*create_tet(char *tet_str, char c);
 
 /*
@@ -69,7 +71,7 @@ void						init_overlay(t_u64b *s, int size);
 void						free_matrix(char ***matrix);
 
 int							solve_square(int bounds, t_u64b *s,
-								t_tet **b_tets, int call);
+								t_tet **b_tets, t_tet **all_tets);
 int							can_place_tet(int col, int row, t_u64b *s,
 								t_u16b b_tet);
 int							calc_min_square_size(int total_bits);
