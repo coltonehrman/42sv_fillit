@@ -9,9 +9,11 @@ DEBUG_OBJ = $(DEBUG_FILES:.c=.o)
 LIBFT = libft/libft.a
 
 $(NAME): $(C_OBJ)
+	make -C libft
 	$(CC) $(C_FLAGS) -o $(NAME) $(C_OBJ) $(LIBFT)
 
 $(DEBUG_NAME):
+	make -C libft
 	$(CC) $(C_FLAGS) -g -o $(DEBUG_NAME) $(C_FILES) $(DEBUG_FILES) $(LIBFT)
 
 .PHONY: all clean fclean re
