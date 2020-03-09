@@ -1,11 +1,15 @@
 CC = gcc
-NAME = fillit
 C_FLAGS = -Wall -Wextra -Werror
-C_FILES = main.c fillit.c solve_square.c check_invalids.c
+
+NAME = fillit
+C_FILES = main.c fillit.c solve_square.c check_invalids.c file_parse.c \
+tet_functions.c
 C_OBJ = $(C_FILES:.c=.o)
+
 DEBUG_NAME = debug
 DEBUG_FILES = debug_funcs.c
 DEBUG_OBJ = $(DEBUG_FILES:.c=.o)
+
 LIBFT = libft/libft.a
 
 $(NAME): $(C_OBJ)

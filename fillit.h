@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fillit.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cehrman <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: cehrman <cehrman@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/23 14:08:22 by cehrman           #+#    #+#             */
-/*   Updated: 2020/03/01 14:09:13 by cehrman          ###   ########.fr       */
+/*   Updated: 2020/03/09 01:32:11 by cehrman          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,39 @@ typedef unsigned long long	t_u64b;
 typedef unsigned short		t_u16b;
 typedef unsigned char		t_u8b;
 
+/*
+**	Tetrimino Struct
+**	stores data in an
+**	(unsigned short which is 16 bits long)
+*/
+
 typedef struct				s_tetrimino {
 	t_u16b		data;
 	int			col;
 	int			row;
 	char		c;
 }							t_tet;
+
+/*
+**	FILE FUNCTIONS
+*/
+
+int							read_file(char *file, char **data);
+t_tet						**parse_file_data(char **file_data, int *total_bits);
+
+/*
+**	TETRIMINO FUNCTIONS
+*/
+
+t_tet						*create_tet(char *tet_str, char c);
+
+/*
+**	CHECK INVALID DATA
+*/
+
+int							check_invalid_tet_shape(char *tet);
+int							check_invalid_tet_data(char *tet);
+int							check_valid_file_split(char **file_split);
 
 t_u64b						create_btet_row(int col, int row, t_u16b b_tet);
 t_u16b						create_section(int col, int row, t_u64b *s);
@@ -50,9 +77,6 @@ int							read_file(char *file, char **data);
 int							get_num_strings(char **matrix);
 int							count_b_tets(t_tet **b_tets);
 int							count_bits(t_u16b b);
-
-int							check_file_split(char **file_split);
-int							check_invalid_tet(char *tet);
 
 /*
 **  DEBUG FUNCTIONS
