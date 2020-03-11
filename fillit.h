@@ -31,6 +31,8 @@ typedef struct				s_tetrimino {
 	int			col;
 	int			row;
 	char		c;
+	int			szx;
+	int			szy;
 }							t_tet;
 
 /*

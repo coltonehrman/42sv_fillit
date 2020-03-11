@@ -16,27 +16,6 @@
 ** DONTDELETE
 */
 
-t_u16b	tet_to_bin(char *tet)
-{
-	t_u16b	bin;
-	int		x;
-
-	bin = 0;
-	x = 0x8000;
-	while (*tet)
-	{
-		if (*tet == '#')
-			bin += x;
-		x = x >> 1;
-		tet++;
-	}
-	return (compress_tet(bin));
-}
-
-/*
-** DONTDELETE
-*/
-
 void	free_matrix(char ***matrix)
 {
 	int	i;
@@ -158,16 +137,12 @@ t_u16b	create_section(int col, int row, t_u64b *s)
 	t_u16b	section;
 
 	section = (s[row++] >> (48 - col)) & 0xF000;
-
 	temp = (s[row++] >> (52 - col)) & 0x0F00;
 	section |= temp;
-
 	temp = (s[row++] >> (56 - col)) & 0x00F0;
 	section |= temp;
-
 	temp = (s[row] >> (60 - col)) & 0x000F;
 	section |= temp;
-
 	return (section);
 }
 

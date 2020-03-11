@@ -104,7 +104,6 @@ int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, t_tet **all_btets)
 	t_u16b	boundsz;
 	t_tet	*b_tet;
 
-	//printf("b_tets left: %d\n", count_b_tets(b_tets));
 	boundsz = (0xFFFF >> (16 - bounds));
 	i = -1;
 	while (b_tets[++i])
@@ -113,25 +112,19 @@ int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, t_tet **all_btets)
 		row = -1;
 		while ((s[row + 1] >> (64 - bounds)) == boundsz && row + 1 < bounds)
 			row++;
-		while (++row < bounds)
+		while (++row < bounds - b_tet->szy + 1)
 		{
 			col = -1;
-			while (++col < bounds)
+			while (++col < bounds - b_tet->szx + 1)
 				if (can_place_tet(col, row, s, (b_tet->data)))
 				{
-					//printf("placing tet\n");
 					place_tet(col, row, s, b_tet);
 					if (all_tets_placed(all_btets))
-							return (1);
-					//print_overlay(s, bounds, bounds, 64);
-					//print_solution(s, all_btets, bounds);
+						return (1);
 					if (solve_square(bounds, s, b_tets + i + 1, all_btets))
 						return (1);
 					if (b_tet->col > -1 && b_tet->row > -1)
-					{
-						//printf("UNplacing tet\n");
 						unplace_tet(s, b_tet);
-					}
 				}
 		}
 	}
