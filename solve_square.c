@@ -103,14 +103,17 @@ int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, t_tet **all_btets)
 	t_u16b	boundsz;
 	t_tet	*b_tet;
 
-	boundsz = (0xFFFF >> (16 - bounds));
 	b_tet = *b_tets;
 	row = -1;
+	boundsz = (0xFFFFFFFF >> (32 - bounds));
 	while ((s[row + 1] >> (64 - bounds)) == boundsz && row + 1 < bounds)
 		row++;
 	while (++row < bounds - b_tet->szy + 1)
 	{
 		col = -1;
+		if (b_tet->data & 0x8000)
+			while (((s[row] >> (47 - col)) & 0x8000) && col + 1 < bounds)
+				col++;
 		while (++col < bounds - b_tet->szx + 1)
 			if (can_place_tet(col, row, s, (b_tet->data)))
 			{
