@@ -162,18 +162,14 @@ t_u16b	create_section(int col, int row, t_u64b *s)
 	t_u16b	section;
 
 	section = 0;
-	temp = 0;
 	temp = s[row] >> (60 - col);
 	section = section | (temp << 12);
-	temp = 0;
 	temp = s[row + 1] >> (60 - col);
 	temp <<= 12;
 	section = section | (temp >> 4);
-	temp = 0;
 	temp = s[row + 2] >> (60 - col);
 	temp <<= 12;
 	section = section | (temp >> 8);
-	temp = 0;
 	temp = s[row + 3] >> (60 - col);
 	temp <<= 12;
 	section = section | (temp >> 12);
