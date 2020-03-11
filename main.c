@@ -43,9 +43,8 @@ int		main(int argc, char **argv)
 	add_bounds_to_square(square, bounds);
 	while (!solve_square(bounds, square, tets, tets) || !all_tets_placed(tets))
 	{
-		++bounds;
 		init_overlay(square, 64);
-		add_bounds_to_square(square, bounds);
+		add_bounds_to_square(square, ++bounds);
 	}
 	print_solution(square, tets, bounds);
 	return (0);
