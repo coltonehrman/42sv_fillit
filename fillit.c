@@ -58,12 +58,8 @@ void	free_matrix(char ***matrix)
 
 t_u8b	get_row_of_tet(t_u16b tet, int row)
 {
-	t_u8b	nib;
-
-	tet = tet << ((row - 1) * 4);
-	tet = tet >> 12;
-	nib = tet;
-	return (nib);
+	tet = tet >> ((4 - row) * 4);
+	return (tet & 15);
 }
 
 /*
@@ -196,8 +192,7 @@ t_u64b	create_btet_row(int col, int row, t_u16b b_tet)
 {
 	t_u64b	b_tet_row;
 
-	b_tet_row = 0;
-	b_tet_row = get_row_of_tet(b_tet, row);
+	b_tet_row = (b_tet >> ((4 - row) * 4)) & 15;
 	b_tet_row <<= (60 - col);
 	return (b_tet_row);
 }
