@@ -86,6 +86,16 @@ void	unplace_tet(t_u64b *s, t_tet *b_tet)
 
 #include <stdio.h>
 
+int		do_skip(int row, int bounds, t_u64b *s)
+{
+	int val;
+
+	if (row >= bounds)
+		return (0);
+	val = s[row] >> (64 - bounds);
+	return (val == (0xFFFF >> (16 - bounds)));
+}
+
 int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, t_tet **all_btets)
 {
 	int	col;
@@ -100,6 +110,8 @@ int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, t_tet **all_btets)
 	while (b_tets[++i])
 	{
 		row = -1;
+		while (do_skip(row + 1, bounds, s))
+			row++;
 		while (++row < bounds)
 		{
 			col = -1;
