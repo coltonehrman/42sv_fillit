@@ -53,8 +53,6 @@ void	print_solution(t_u64b *s, t_tet **b_tets, int bounds)
 		{
 			found = find_tet_in(col, row, b_tets);
 			s_section = create_section(col, row, s);
-			s_section >>= 15;
-			s_section <<= 15;
 			if (found && (s_section & 0x8000))
 				ft_putchar(found->c);
 			else
@@ -68,39 +66,30 @@ void	print_solution(t_u64b *s, t_tet **b_tets, int bounds)
 
 void	place_tet(int col, int row, t_u64b *s, t_tet *b_tet)
 {
-	t_u64b	b_tet_row[4];
-	int		i;
+	t_u16b data;
 
-	i = 0;
-	b_tet_row[0] = create_btet_row(col, 1, b_tet->data);
-	b_tet_row[1] = create_btet_row(col, 2, b_tet->data);
-	b_tet_row[2] = create_btet_row(col, 3, b_tet->data);
-	b_tet_row[3] = create_btet_row(col, 4, b_tet->data);
-	i = 0;
-	while (i < 4)
-	{
-		s[row + i] = s[row + i] | b_tet_row[i];
-		++i;
-	}
+	data = b_tet->data;
 	b_tet->col = col;
 	b_tet->row = row;
+	s[row++] |= create_btet_row(col, 1, data);
+	s[row++] |= create_btet_row(col, 2, data);
+	s[row++] |= create_btet_row(col, 3, data);
+	s[row] |= create_btet_row(col, 4, data);
 }
 
 void	unplace_tet(t_u64b *s, t_tet *b_tet)
 {
-	t_u64b	b_tet_row[4];
-	int		i;
+	t_u16b	data;
+	int		row;
+	int		col;
 
-	i = 0;
-	b_tet_row[0] = create_btet_row(b_tet->col, 1, b_tet->data);
-	b_tet_row[1] = create_btet_row(b_tet->col, 2, b_tet->data);
-	b_tet_row[2] = create_btet_row(b_tet->col, 3, b_tet->data);
-	b_tet_row[3] = create_btet_row(b_tet->col, 4, b_tet->data);
-	while (i < 4)
-	{
-		s[b_tet->row + i] = s[b_tet->row + i] ^ b_tet_row[i];
-		++i;
-	}
+	data = b_tet->data;
+	row = b_tet->row;
+	col = b_tet->col;
+	s[row++] ^= create_btet_row(col, 1, data);
+	s[row++] ^= create_btet_row(col, 2, data);
+	s[row++] ^= create_btet_row(col, 3, data);
+	s[row] ^= create_btet_row(col, 4, data);
 	b_tet->col = -1;
 	b_tet->row = -1;
 }
@@ -109,41 +98,33 @@ void	unplace_tet(t_u64b *s, t_tet *b_tet)
 
 int		solve_square(int bounds, t_u64b *s, t_tet **b_tets, t_tet **all_btets)
 {
-	int	col;
-	int	row;
-	int	i;
+	int		col;
+	int		row;
+	t_u16b	boundsz;
+	t_tet	*b_tet;
 
-	//printf("b_tets left: %d\n", count_b_tets(b_tets));
-	if (all_tets_placed(all_btets))
-		return (1);
-	i = 0;
-	while (b_tets[i])
+	b_tet = *b_tets;
+	row = -1;
+	boundsz = (0xFFFFFFFF >> (32 - bounds));
+	while ((s[row + 1] >> (64 - bounds)) == boundsz && row + 1 < bounds)
+		row++;
+	while (++row < bounds - b_tet->szy + 1)
 	{
-		row = 0;
-		while (row < bounds)
-		{
-			col = 0;
-			while (col < bounds)
+		col = -1;
+		if (b_tet->data & 0x8000)
+			while (((s[row] >> (47 - col)) & 0x8000) && col + 1 < bounds)
+				col++;
+		while (++col < bounds - b_tet->szx + 1)
+			if (can_place_tet(col, row, s, (b_tet->data)))
 			{
-				if (can_place_tet(col, row, s, (b_tets[i]->data)))
-				{
-					//printf("placing tet\n");
-					place_tet(col, row, s, b_tets[i]);
-					//print_overlay(s, bounds, bounds, 64);
-					//print_solution(s, all_btets, bounds);
-					if (solve_square(bounds, s, b_tets + i + 1, all_btets))
-						return (1);
-					if (b_tets[i]->col > -1 && b_tets[i]->row > -1)
-					{
-						//printf("UNplacing tet\n");
-						unplace_tet(s, b_tets[i]);
-					}
-				}
-				++col;
+				place_tet(col, row, s, b_tet);
+				if (all_tets_placed(all_btets))
+					return (1);
+				if (solve_square(bounds, s, b_tets + 1, all_btets))
+					return (1);
+				if (b_tet->col > -1 && b_tet->row > -1)
+					unplace_tet(s, b_tet);
 			}
-			++row;
-		}
-		++i;
 	}
 	return (0);
 }

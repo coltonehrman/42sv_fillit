@@ -54,12 +54,12 @@ t_tet	**parse_file_data(char **file_data, int *total_bits)
 		return (0);
 	i = 0;
 	c = 'A';
-	*total_bits = 0;
 	while (file_split[i])
 	{
 		tets[i] = create_tet(file_split[i], c++);
 		++i;
 	}
+	*total_bits = i * 4;
 	tets[i] = 0;
 	free_matrix(&file_split);
 	return (tets);
