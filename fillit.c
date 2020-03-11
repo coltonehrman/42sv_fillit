@@ -184,7 +184,6 @@ int		can_place_tet(int col, int row, t_u64b *s, t_u16b b_tet)
 {
 	t_u16b	b_section;
 
-	b_tet = compress_tet(b_tet);
 	b_section = create_section(col, row, s);
 	return (!(b_tet & b_section));
 }

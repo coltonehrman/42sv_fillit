@@ -76,10 +76,10 @@ void	place_tet(int col, int row, t_u64b *s, t_tet *b_tet)
 
 void	unplace_tet(t_u64b *s, t_tet *b_tet)
 {
-	s[row + 0] ^= create_btet_row(col, 1, b_tet->data);
-	s[row + 1] ^= create_btet_row(col, 2, b_tet->data);
-	s[row + 2] ^= create_btet_row(col, 3, b_tet->data);
-	s[row + 3] ^= create_btet_row(col, 4, b_tet->data);
+	s[b_tet->row + 0] ^= create_btet_row(b_tet->col, 1, b_tet->data);
+	s[b_tet->row + 1] ^= create_btet_row(b_tet->col, 2, b_tet->data);
+	s[b_tet->row + 2] ^= create_btet_row(b_tet->col, 3, b_tet->data);
+	s[b_tet->row + 3] ^= create_btet_row(b_tet->col, 4, b_tet->data);
 	b_tet->col = -1;
 	b_tet->row = -1;
 }
